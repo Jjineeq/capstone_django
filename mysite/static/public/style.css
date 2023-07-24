@@ -1,0 +1,17 @@
+@import "/public/reset.css";
+@import "/public/components/nav.css";
+@import "/public/components/item.css";
+@import "/public/components/more.css";
+
+@import "/public/screens/main.css";
+@import "/public/screens/about.css";
+@import "/public/screens/contact.css";
+@import "/public/screens/footer.css";
+@import "/public/screens/tech.css";
+
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap");
+@import url("https://webfontworld.github.io/NexonLv1Gothic/NexonLv1Gothic.css");
+body {
+  overflow-x: hidden;
+  font-family: "NexonLv1Gothic";
+}

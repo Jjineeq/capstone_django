@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="/public/mapstyle.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <% include("nav.html") %>
+
+    <div class="wrap">
+      <div class="main-scroll">
+        <div class="more-screen">
+          <div class="tech-screen">
+            <div class="more">
+              <h2 class="more_title">SORAL MAP FIELD</h2>
+
+              <div class="more_info">
+                <p>여기에는 solar map 소개하는 한줄 쓸 거임</p>
+              </div>
+              <div class="map-wrapper">
+                <div id="map" style="width: 800px; height: 500px"></div>
+                <div id="clickLatlng"></div>
+                <form id="search-form">
+                  <input
+                    type="text"
+                    id="address-input"
+                    placeholder="주소를 입력하세요"
+                  />
+                  <button type="button" onclick="searchAddress()">검색</button>
+                </form>
+                <div id="search-result"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-screen">
+        <div class="footer-info">
+          <div class="member">
+            <span>장성호</span>
+            <span>김채현</span>
+            <span>송성혜</span>
+            <span>전태림</span>
+          </div>
+          <div class="location">
+            경기도 시흥시 산기대학로 237 한국공학대학교
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://kit.fontawesome.com/4b3c3b390b.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=48c6f5e4edb390d377fc3cf7623ea78e&libraries=services"></script>
+    <script>
+      var map;
+      var marker;
+
+      function initMap() {
+        var container = document.getElementById("map");
+        var options = {
+          center: new kakao.maps.LatLng(37.3402588, 126.7335448),
+          level: 3,
+        };
+
+        map = new kakao.maps.Map(container, options);
+      }
+
+      // 검색 폼의 submit 이벤트를 처리하는 함수 정의
+      function searchAddress() {
+        var address = document.getElementById("address-input").value;
+
+        // 장소 검색 서비스를 이용하여 검색한 주소의 좌표를 가져옴
+        var geocoder = new kakao.maps.services.Geocoder();
+        geocoder.addressSearch(address, function (result, status) {
+          if (status === kakao.maps.services.Status.OK) {
+            var location = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+            // 검색 결과를 지도에 표시하는 마커 생성
+            if (!marker) {
+              marker = new kakao.maps.Marker({ position: location });
+              marker.setMap(map);
+            } else {
+              marker.setPosition(location);
+            }
+
+            // 지도 중심을 검색 결과 위치로 이동
+            map.setCenter(location);
+
+            // 클릭한 위치의 위도와 경도를 표시할 메시지 설정
+            var message =
+              "검색한 위치의 위도는 " +
+              location.getLat() +
+              " 이고, " +
+              "경도는 " +
+              location.getLng() +
+              " 입니다";
+
+            // 'clickLatlng' 라는 아이디값을 가진 <div> 태그의 innerHTML로 메시지 설정
+            var resultDiv = document.getElementById("clickLatlng");
+            resultDiv.innerHTML = message;
+
+            // 검색 결과를 검색 결과 <div>에 표시
+            var searchResultDiv = document.getElementById("search-result");
+            searchResultDiv.innerHTML =
+              "검색 결과 위치: 위도 " +
+              location.getLat() +
+              ", 경도 " +
+              location.getLng();
+          } else {
+            alert("검색 결과가 없거나 오류가 발생했습니다.");
+          }
+        });
+      }
+
+      // Kakao 지도 SDK 로드 후 initMap 함수 호출
+      kakao.maps.load(initMap);
+    </script>
+  </body>
+</html>
