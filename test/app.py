@@ -18,13 +18,35 @@ def test():
         'result': 'abvdcdsa'
     })
 
-@app.route('/a')
-def home():
-   return render_template('index.html')
-
 @app.route('/abc')
 def abc():
     return 'abc'
+
+@app.route('/about')
+def about():
+   return render_template('about.html')
+
+@app.route('/contact')
+def contact():
+   return render_template('contact.html')
+
+@app.route('/index')
+def index():
+   return render_template('index.html')
+
+@app.route('/map')
+def map():
+   return render_template('map.html')
+
+@app.route('/nav')
+def nav():
+   return render_template('nav.html')
+
+@app.route('/tech')
+def tech():
+   return render_template('tech.html')
+
+
 
 
 @app.route('/clear_sky', methods=['POST'])
