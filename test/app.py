@@ -46,13 +46,15 @@ def nav():
 def tech():
    return render_template('tech.html')
 
-
+@app.route('/some')
+def home():
+   return render_template('some.html')
 
 
 @app.route('/clear_sky', methods=['POST'])
 def clear_sky():
     data = request.get_json()
-    capacity = data['input_variable']
+    capacity = data['input_variable'] 
     latitude = -33.8878872
     longitude = 151.2007315
     start_date = '2020-01-01'
@@ -83,7 +85,8 @@ def clear_sky():
     mc.run_model(solis_clearsky)
 
     # Replace NaN values in the 'ac' column with 0
-    mc.ac.fillna(0, inplace=True)
+    
+    #mc.ac.fillna(0, inplace=True)
 
     df = pd.DataFrame(mc.ac).to_dict('records')
 
