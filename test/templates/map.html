@@ -23,7 +23,8 @@
                 <div class="modal-inner">
                   <div class="modal-graph">
                     <span>경도와 위도에 기반한 태양광 발전량 그래프</span>
-                    <img src="/static/img/item01.jpg" />
+                    <img id = 'initial-image' src="/static/img/item01.jpg" />
+                    <canvas id="myChart" style = 'display:none;'></canvas>
                   </div>
                   <div class="modal-input">
                     <div class="modal-input-text">
@@ -33,15 +34,15 @@
                       </p>
                     </div>
                     <div class="modal-input-form">
-                      <form>
-                        <select name="pannel">
-                          <option selected>1kWp</option>
-                          <option>2kWp</option>
-                          <option>3kWp</option>
-                          <option>4kWp</option>
+                      <form id="capacity-form">
+                        <select name="pannel" id="capacity-select">
+                          <option value="1">1kWp</option>
+                          <option value="2">2kWp</option>
+                          <option value="3">3kWp</option>
+                          <option value="4">4kWp</option>
                         </select>
                       </form>
-                      <button>조건변경</button>
+                      <button onclick="calculateCapacity()">조건변경</button>
                     </div>
                   </div>
                 </div>
@@ -90,12 +91,18 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=2597e8451d340207037236899f5693f3&libraries=services"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
       var map;
       var marker;
       var modal = document.getElementById("modal");
       var modalAddress = document.getElementById("modal-address");
+      var location_2_lat;
+      var location_2_lng;
+      var myChart;
+      
 
       function initMap() {
         var container = document.getElementById("map");
@@ -114,6 +121,8 @@
         geocoder.addressSearch(address, function (result, status) {
           if (status === kakao.maps.services.Status.OK) {
             var location = new kakao.maps.LatLng(result[0].y, result[0].x);
+            location_2_lat = location.getLat(); 
+            location_2_lng = location.getLng();
 
             if (!marker) {
               marker = new kakao.maps.Marker({ position: location });
@@ -163,6 +172,61 @@
       kakao.maps.load(function () {
         initMap();
       });
+
+      function calculateCapacity() {
+        var selectedValue = document.getElementById("capacity-select").value;
+        console.log(selectedValue);
+        var calculatedCapacity = selectedValue * 1000; // 선택된 값에 1000을 곱함
+        var longitude = location_2_lng; 
+        var latitude = location_2_lat; 
+
+
+        // Flask 서버로 계산 결과 전송
+        fetch("/clear_sky", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            capacity: calculatedCapacity,
+            longitude: longitude,
+            latitude: latitude,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            var dataResult = data.result.map(item => item.p_mp); // 데이터 형태 변환
+            drawChart(dataResult); // 변환된 데이터를 그래프 함수에 전달
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      function drawChart(dataResult) {
+        if (myChart) {
+          myChart.destroy();
+        }
+        // 초기 이미지를 숨기고 캔버스를 보여줍니다.
+        document.getElementById("initial-image").style.display = "none";
+        document.getElementById("myChart").style.display = "block";
+        
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var labels = [];
+        for (var i = 0; i < 24; i++) {
+          labels.push(i + '시');
+        }
+        myChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels, 
+            datasets: [{
+              label: '발전량(W)',
+              data: dataResult,
+            }]
+          },
+        });
+      }
     </script>
   </body>
 </html>

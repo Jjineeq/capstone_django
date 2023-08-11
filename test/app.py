@@ -4,13 +4,13 @@ from flask import Flask, request, jsonify, render_template
 import pandas as pd
 import numpy as np
 import pvlib
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
     return 'Hello World!'
-
 
 @app.route('/test')
 def test():
@@ -50,19 +50,22 @@ def tech():
 def home():
    return render_template('some.html')
 
-
 @app.route('/clear_sky', methods=['POST'])
 def clear_sky():
     data = request.get_json()
-    capacity = data['input_variable'] 
-    latitude = -33.8878872
-    longitude = 151.2007315
-    start_date = '2020-01-01'
-    end_date = '2020-01-02'
+    capacity = data['capacity'] 
+    latitude = data['latitude']
+    longitude = data['longitude']
 
-    location = pvlib.location.Location(latitude, longitude, tz='Australia/Sydney')
+    today = datetime.today()
 
-    times = pd.date_range(start=start_date, end=end_date, freq='1H', tz='Australia/Sydney')
+    start_date = today.replace(hour=0)
+    end_date = today.replace(hour=23)
+
+    location = pvlib.location.Location(latitude, longitude, tz='Asia/Seoul')
+
+    times = pd.date_range(start=start_date, end=end_date, freq='1H', tz='Asia/Seoul')
+
     solpos = location.get_solarposition(times=times)
     dni_extra = pvlib.irradiance.get_extra_radiation(times)
     airmass = pvlib.atmosphere.get_relative_airmass(solpos['apparent_zenith'])
@@ -94,7 +97,6 @@ def clear_sky():
         'result': [record for record in df]
     })
 
-
 @app.route('/process', methods=['POST'])
 def process():
     data = request.get_json()
@@ -107,7 +109,5 @@ def process_data(input_variable):
     # 원하는 작업을 수행하고 결과를 리턴하는 함수
     return f'입력된 변수 값: {input_variable}'
 
-
-
 if __name__ == '__main__':
-    app.run(debug = True, port=7000)
+    app.run(debug = True, port=5000)
