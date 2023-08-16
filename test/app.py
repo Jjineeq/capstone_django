@@ -109,5 +109,13 @@ def process_data(input_variable):
     # 원하는 작업을 수행하고 결과를 리턴하는 함수
     return f'입력된 변수 값: {input_variable}'
 
+# @app.route('/contact_mail')
+# def connect_mail():
+#     data = request.get_json()
+    
+
+
+
+
 if __name__ == '__main__':
     app.run(debug = True, port=5000)
