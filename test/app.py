@@ -78,12 +78,12 @@ def clear_sky():
 
     capacity = float(capacity)
 
-    system = pvlib.pvsystem.PVSystem(surface_tilt=30, surface_azimuth=180,
+    system = pvlib.pvsystem.PVSystem(surface_tilt=15, surface_azimuth=180,
                                      module_parameters={'pdc0': capacity, 'gamma_pdc': -0.004},
                                      inverter_parameters={'pdc0': capacity},
                                      modules_per_string=1, strings_per_inverter=1,
-                                     temperature_model_parameters={'a': -3.56, 'b': -0.075, 'deltaT': 3})
-    mc = pvlib.modelchain.ModelChain(system, location, spectral_model='no_loss', aoi_model='no_loss')
+                                     temperature_model_parameters={'a': -3.56, 'b': -0.075, 'deltaT': 5})
+    mc = pvlib.modelchain.ModelChain(system, location, spectral_model='no_loss', aoi_model='physical')
 
     mc.run_model(solis_clearsky)
 
