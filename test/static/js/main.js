@@ -43,3 +43,41 @@ function sendData() {
         console.error('Error:', error);
     });
 }
+
+
+function submitData() {
+    let tablesData = [];
+
+    let tables = document.querySelectorAll('.table > div');
+    
+    tables.forEach(table => {
+        let tableData = {};
+
+        // 예를 들어 이름과 연락처를 가져옵니다.
+        tableData.name = table.querySelector('.name input').value;
+        tableData.contact = []; 
+        table.querySelectorAll('.call input').forEach(input => {
+            tableData.contact.push(input.value);
+        });
+
+        // 다른 데이터도 이와 유사하게 추출할 수 있습니다.
+
+        tablesData.push(tableData);
+    });
+
+    // 서버로 데이터 전송
+    fetch('/contact_mail', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(tablesData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}

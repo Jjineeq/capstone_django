@@ -5,6 +5,15 @@ import pandas as pd
 import numpy as np
 import pvlib
 from datetime import datetime, timedelta
+import smtplib, ssl, imaplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+id = pd.read_excel('./id_password.xlsx', header=None)
+
+email_user = id[0][0]
+email_password = id[1][0]
+
 
 app = Flask(__name__)
 
@@ -78,11 +87,11 @@ def clear_sky():
 
     capacity = float(capacity)
 
-    system = pvlib.pvsystem.PVSystem(surface_tilt=15, surface_azimuth=180,
-                                     module_parameters={'pdc0': capacity, 'gamma_pdc': -0.004},
+    system = pvlib.pvsystem.PVSystem(surface_tilt=25, surface_azimuth=180,
+                                     module_parameters={'pdc0': capacity, 'gamma_pdc': -0.04},
                                      inverter_parameters={'pdc0': capacity},
                                      modules_per_string=1, strings_per_inverter=1,
-                                     temperature_model_parameters={'a': -3.56, 'b': -0.075, 'deltaT': 5})
+                                     temperature_model_parameters={'a': -3.56, 'b': -0.075, 'deltaT': 3})
     mc = pvlib.modelchain.ModelChain(system, location, spectral_model='no_loss', aoi_model='physical')
 
     mc.run_model(solis_clearsky)
@@ -109,9 +118,55 @@ def process_data(input_variable):
     # 원하는 작업을 수행하고 결과를 리턴하는 함수
     return f'입력된 변수 값: {input_variable}'
 
-# @app.route('/contact_mail')
-# def connect_mail():
-#     data = request.get_json()
+
+def connect_email(user_id):
+    """
+    input:
+        user_id : gmail id (dtype : str)
+    
+    사용시기:
+        메일을 읽거나, 보낼때 연결을 위해서 사용
+        보내는 메일은 smtp를 사용하고, 받는 메일은 imap를 사용
+    """
+    smtp = smtplib.SMTP('smtp.gmail.com', 587) # send
+    imap = imaplib.IMAP4_SSL('imap.gmail.com') #receive
+
+    smtp.ehlo()
+    smtp.starttls()
+    smtp.login(user_id, email_password)
+    imap.login(user_id, email_password)
+    imap.select("INBOX") # receive mail box
+
+    return smtp, imap
+
+def send_email(smtp, recipient, subject, body):
+    """
+    smtp : smtp connection (dtype : smtplib.SMTP)
+    recipient : 수신자 (dtype : str or list)
+    subject : 제목 (dtype : str)
+    body : 본문 (dtype : str)
+    """
+    FROM = email_user
+    TO = recipient if isinstance(recipient, list) else [recipient]
+    SUBJECT = subject
+    TEXT = body
+
+    # Prepare actual message
+    message = MIMEMultipart("alternative", None, [MIMEText(TEXT, 'html', 'utf-8')])
+
+    message['Subject'] = SUBJECT
+    message['From'] = FROM
+    message['To'] = ", ".join(TO)
+
+    # Send the mail using the passed smtp connection
+    smtp.sendmail(FROM, TO, message.as_string())
+
+
+@app.route('/contact_mail', methods=['POST'])
+def send_mail():
+    smtp, imap = connect_email(email_user)
+    
+    data = request.get_json()
     
 
 
