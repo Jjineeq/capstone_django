@@ -89,9 +89,9 @@ def clear_sky():
 
     # Replace NaN values in the 'ac' column with 0
     
-    #mc.ac.fillna(0, inplace=True)
+    # mc.ac.fillna(0, inplace=True)
 
-    df = pd.DataFrame(mc.ac).to_dict('records')
+    df = pd.DataFrame(mc.results.ac).to_dict('records')
 
     return jsonify({
         'result': [record for record in df]
