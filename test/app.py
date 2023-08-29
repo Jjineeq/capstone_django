@@ -125,19 +125,16 @@ def connect_email(user_id):
         user_id : gmail id (dtype : str)
     
     사용시기:
-        메일을 읽거나, 보낼때 연결을 위해서 사용
-        보내는 메일은 smtp를 사용하고, 받는 메일은 imap를 사용
+        메일을 보낼때 연결을 위해서 사용
+        보내는 메일은 smtp를 사용
     """
     smtp = smtplib.SMTP('smtp.gmail.com', 587) # send
-    imap = imaplib.IMAP4_SSL('imap.gmail.com') #receive
 
     smtp.ehlo()
     smtp.starttls()
     smtp.login(user_id, email_password)
-    imap.login(user_id, email_password)
-    imap.select("INBOX") # receive mail box
 
-    return smtp, imap
+    return smtp
 
 def send_email(smtp, recipient, subject, body):
     """
@@ -161,14 +158,30 @@ def send_email(smtp, recipient, subject, body):
     # Send the mail using the passed smtp connection
     smtp.sendmail(FROM, TO, message.as_string())
 
-
 @app.route('/contact_mail', methods=['POST'])
 def send_mail():
-    smtp, imap = connect_email(email_user)
+    smtp = connect_email(email_user)
     
     data = request.get_json()
     
+    # 데이터에서 이름, 연락처, 이메일, 문의 내용을 추출합니다.
+    name = data.get('name')
+    contact = data.get('contact')
+    email = data.get('email')
+    query = data.get('query')
 
+    # 이메일 내용 구성
+    subject = "새로운 문의가 도착했습니다!"
+    body = f"이름: {name}<br>연락처: {contact}<br>이메일: {email}<br>문의 내용: {query}"
+
+    recipient_email = "jang0212@tukorea.ac.kr"  # Please replace "EMAIL" with your actual email
+
+    # 이메일 전송
+    try:
+        send_email(smtp, recipient_email, subject, body)
+        return jsonify({'status': 'success', 'message': 'Email sent successfully!'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
 
 
 

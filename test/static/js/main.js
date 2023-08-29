@@ -46,24 +46,18 @@ function sendData() {
 
 
 function submitData() {
-    let tablesData = [];
+    let userData = {};
 
-    let tables = document.querySelectorAll('.table > div');
+    // 이름, 연락처, 이메일, 문의내용을 가져옵니다.
+    userData.name = document.getElementById('user').value;
+    userData.contact = document.getElementById('user-number').value;
     
-    tables.forEach(table => {
-        let tableData = {};
-
-        // 예를 들어 이름과 연락처를 가져옵니다.
-        tableData.name = table.querySelector('.name input').value;
-        tableData.contact = []; 
-        table.querySelectorAll('.call input').forEach(input => {
-            tableData.contact.push(input.value);
-        });
-
-        // 다른 데이터도 이와 유사하게 추출할 수 있습니다.
-
-        tablesData.push(tableData);
-    });
+    // 이메일 주소는 두 부분으로 나뉘어져 있으므로 합쳐야 합니다.
+    let emailPart1 = document.getElementById('user-email').value;
+    let emailPart2 = document.getElementById('user-email2').value;
+    userData.email = `${emailPart1}@${emailPart2}`;
+    
+    userData.query = document.getElementById('ask').value;
 
     // 서버로 데이터 전송
     fetch('/contact_mail', {
@@ -71,7 +65,7 @@ function submitData() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(tablesData)
+        body: JSON.stringify(userData)
     })
     .then(response => response.json())
     .then(data => {
