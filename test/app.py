@@ -173,16 +173,25 @@ def send_mail():
     solar = data.get('solar')
     query = data.get('query')
     
+    solar_value_list = []
+    using_value_list = []
+
+    print(solar)
+    print(using)
+
 
     # 이메일 내용 구성
     subject = "새로운 문의가 도착했습니다!"
-    body = f"이름: {name}<br>연락처: {contact}<br>이메일: {email}<br>문의 내용: {query} <br>전력 사용량: {using} <br>태양광 발전량: {solar}"
+    body = f"이름: {name}<br>연락처: {contact}<br>이메일: {email}<br> 문의 내용: {query}"
 
+    data_frame = pd.DataFrame({'using' : using, 'solar' : solar}).T.to_html()
+
+    total_body = body + data_frame
     recipient_email = "jang0212@tukorea.ac.kr"
 
     # 이메일 전송
     try:
-        send_email(smtp, recipient_email, subject, body)
+        send_email(smtp, recipient_email, subject, total_body)
         return jsonify({'status': 'success', 'message': 'Email sent successfully!'})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
