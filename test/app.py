@@ -165,6 +165,8 @@ def send_mail():
     
     data = request.get_json()
     
+    print(data)
+    
     # 데이터에서 이름, 연락처, 이메일, 문의 내용을 추출합니다.
     name = data.get('name')
     contact = data.get('contact')

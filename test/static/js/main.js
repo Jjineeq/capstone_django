@@ -53,20 +53,24 @@ function submitData() {
               document.getElementById('user-number2').value + "-" +
               document.getElementById('user-number3').value;
     let email = document.getElementById('user-email').value + "@" + document.getElementById('user-email2').value;
-    let using = document.querySelectorAll(".usage-input");
-    let solar = document.querySelectorAll(".solar-input");
+    let usingElements = document.querySelectorAll(".usage-input");
+    let solarElements = document.querySelectorAll(".solar-input");
     let query = document.getElementById('ask').value;
 
+    let usingValues = Array.from(usingElements).map(input => input.value);
+    let solarValues = Array.from(solarElements).map(input => input.value);
 
     // Construct the data object
     let userData = {
         'name': name,
         'contact': contact,
         'email': email,
-        'using': using,
-        'solar': solar,
+        'using': usingValues,
+        'solar': solarValues,
         'query': query
     };
+
+    console.log(userData);
 
     // Send POST request to the server
     fetch('/contact_mail', {

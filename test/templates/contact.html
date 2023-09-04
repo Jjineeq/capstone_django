@@ -374,7 +374,7 @@
                     </div>
                     <!-- js 반복문으로 변경 예정 -->
                     <div class="submit-btn">
-                      <button class="finish" onclick="submitData()">문의하기</button>
+                      <button class="finish">문의하기</button> <!--여기에 onclick='submitData()' 넣으면 두번 호출되서 메일 2개 발송됨-->
                     </div>
                   </div>
                 </form>
@@ -412,34 +412,42 @@
     crossorigin="anonymous"
   ></script>
   <script>
-    // 문의하기 버튼을 가져옵니다.
-    var submitButton = document.querySelector(".finish");
+  // 전역 변수로 사용량 및 발전량 배열을 선언합니다.
+  var usageValues = [];
+  var solarValues = [];
 
-    // 문의하기 버튼에 클릭 이벤트 리스너를 추가합니다.
-    submitButton.addEventListener("click", function (event) {
-      // 기본 동작(페이지 새로고침)을 막습니다.
-      event.preventDefault();
+  // 문의하기 버튼을 가져옵니다.
+  var submitButton = document.querySelector(".finish");
 
-      // 모든 사용량 input 요소를 선택합니다.
-      var usageInputs = document.querySelectorAll(".usage-input");
-      var solarInputs = document.querySelectorAll(".solar-input");
-      // 결과를 저장할 배열을 생성합니다.
-      var usageValues = [];
-      var solarValues = [];
+  // 문의하기 버튼에 클릭 이벤트 리스너를 추가합니다.
+  submitButton.addEventListener("click", function (event) {
+    // 기본 동작(페이지 새로고침)을 막습니다.
+    event.preventDefault();
 
-      // 각 input 요소에서 값을 추출하여 배열에 추가합니다.
-      usageInputs.forEach(function (input) {
-        usageValues.push(input.value);
-      });
+    // 모든 사용량 input 요소를 선택합니다.
+    var usageInputs = document.querySelectorAll(".usage-input");
+    var solarInputs = document.querySelectorAll(".solar-input");
 
-      solarInputs.forEach(function (input) {
-        solarValues.push(input.value);
-      });
+    // 배열을 초기화합니다.
+    usageValues = [];
+    solarValues = [];
 
-      // 결과 배열을 콘솔에 출력합니다.
-      console.log(usageValues);
-      console.log(solarValues);
+    // 각 input 요소에서 값을 추출하여 배열에 추가합니다.
+    usageInputs.forEach(function (input) {
+      usageValues.push(input.value);
     });
+
+    solarInputs.forEach(function (input) {
+      solarValues.push(input.value);
+    });
+
+    // 결과 배열을 콘솔에 출력합니다.
+    console.log(usageValues);
+    console.log(solarValues);
+
+    // submitData 함수를 호출하여 서버에 데이터를 전송합니다.
+    submitData();
+  });
   </script>
   
 </html>
