@@ -49,7 +49,9 @@ function sendData() {
 function submitData() {
     // Collect user input
     let name = document.getElementById('user').value;
-    let contact = document.getElementById('user-number').value;
+    let contact = document.getElementById('user-number1').value + "-" +
+              document.getElementById('user-number2').value + "-" +
+              document.getElementById('user-number3').value;
     let email = document.getElementById('user-email').value + "@" + document.getElementById('user-email2').value;
     let using = document.querySelectorAll(".usage-input");
     let solar = document.querySelectorAll(".solar-input");
