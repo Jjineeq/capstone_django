@@ -359,11 +359,14 @@ def send_mail():
     name = data.get('name')
     contact = data.get('contact')
     email = data.get('email')
+    using = data.get('using')
+    solar = data.get('solar')
     query = data.get('query')
+    
 
     # 이메일 내용 구성
     subject = "새로운 문의가 도착했습니다!"
-    body = f"이름: {name}<br>연락처: {contact}<br>이메일: {email}<br>문의 내용: {query}"
+    body = f"이름: {name}<br>연락처: {contact}<br>이메일: {email}<br>문의 내용: {query} <br>전력 사용량: {using} <br>태양광 발전량: {solar}"
 
     recipient_email = "jang0212@tukorea.ac.kr"
 
@@ -374,28 +377,28 @@ def send_mail():
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
 
-    smtp = connect_email(email_user)
+    # smtp = connect_email(email_user)
     
-    data = request.get_json()
+    # data = request.get_json()
     
-    # 데이터에서 이름, 연락처, 이메일, 문의 내용을 추출합니다.
-    name = data.get('name')
-    contact = data.get('contact')
-    email = data.get('email')
-    query = data.get('query')
+    # # 데이터에서 이름, 연락처, 이메일, 문의 내용을 추출합니다.
+    # name = data.get('name')
+    # contact = data.get('contact')
+    # email = data.get('email')
+    # query = data.get('query')
 
-    # 이메일 내용 구성
-    subject = "새로운 문의가 도착했습니다!"
-    body = f"이름: {name}<br>연락처: {contact}<br>이메일: {email}<br>문의 내용: {query}"
+    # # 이메일 내용 구성
+    # subject = "새로운 문의가 도착했습니다!"
+    # body = f"이름: {name}<br>연락처: {contact}<br>이메일: {email}<br>문의 내용: {query}"
 
-    recipient_email = "jang0212@tukorea.ac.kr"  # Please replace "EMAIL" with your actual email
+    # recipient_email = "jang0212@tukorea.ac.kr"  # Please replace "EMAIL" with your actual email
 
-    # 이메일 전송
-    # try:
-    send_email(smtp, recipient_email, subject, body)
-        # return jsonify({'status': 'success', 'message': 'Email sent successfully!'})
-    # except Exception as e:
-    #     return jsonify({'status': 'error', 'message': str(e)})
+    # # 이메일 전송
+    # # try:
+    # send_email(smtp, recipient_email, subject, body)
+    #     # return jsonify({'status': 'success', 'message': 'Email sent successfully!'})
+    # # except Exception as e:
+    # #     return jsonify({'status': 'error', 'message': str(e)})
 
 
 

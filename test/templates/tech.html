@@ -46,9 +46,12 @@
                   <div class="field_item_info">
                     <div class="field_item_info_title">태양광 발전량 예측</div>
                     <div class="field_item_info_des">
-                      LSTM, Light GBM, Random Forest, Extra Trees, Clear Sky model을 사용하여 태양광 발전량을 예측
-                      1년치 데이터를 사용하여 1시간 단위로 예측을 진행
                       다양한 종합 관측소 데이터를 모두 사용하여 거리에 반비례하는 가중치를 부여하여 예측
+                      다변량 예측으로 기상청 일기예보 API를 사용하여 1시간 단위로 1년치 데이터를 학습 후 24시간 동안의 발전량을 예측
+                      LSTM, Light GBM, Random Forest, Extra Trees, Clear Sky model을 base model으로 사용하여 태양광 발전량을 예측
+                      이후 linear regression model을 meta model으로 사용하여 base model의 예측 값을 학습하여 최종 예측 진행
+                      
+                      
                     </div>
                   </div>
                 </div>
