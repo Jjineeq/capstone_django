@@ -1,6 +1,6 @@
 import numpy as np
 import json
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, url_for, redirect
 import pandas as pd
 import numpy as np
 import pvlib
@@ -18,8 +18,8 @@ email_password = id[1][0]
 app = Flask(__name__)
 
 @app.route('/')
-def hello_world():
-    return 'Hello World!'
+def root():
+    return redirect(url_for('index'))
 
 @app.route('/test')
 def test():
